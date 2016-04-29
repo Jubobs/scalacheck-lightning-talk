@@ -34,12 +34,16 @@ class MathProp extends PropSpec with Checkers {
     )
   }
 
-  property("sqrt(x) returns a number whose square is equal to x if x is positive") {
+  property("sqrt(x) returns a number whose square is approximately equal to x if x positive") {
     check(
       forAll { x: Double =>
         (x > 0) ==> {
-          val y = sqrt(x)
-          y * y == x
+          val eps = pow(2, -52)
+          val relativeError = {
+            val y = sqrt(x)
+            abs(y * y - x) / x
+          }
+          relativeError < eps
         }
       }
     )
